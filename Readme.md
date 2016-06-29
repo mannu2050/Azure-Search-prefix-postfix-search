@@ -1,6 +1,6 @@
 ---
-services: active-directory
-platforms: java
+services: azure-search
+platforms: REST
 author: Manish Sharma
 ---
 
