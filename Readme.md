@@ -5,14 +5,19 @@ author: Manish Sharma
 ---
 
 #Prefix & postfix searching with Azure Search
-If you have data like:
+In Azure Search there is a possibility to address custom search analyzers which will address custom specifications. 
+In this post I am describing one of the custom analyzer scenario. 
+Let us take an example in which a search index will have the following data:
 (1) Tomcat
 (2) Catalina
 (3) StuffedCat
-and you want to show all three if cat is specified in the search criteria. It is as simple as you want.
 
-In traditional infix search you will get the resultset when it is starting with cat e.g. catalina will be returned once you search for cat in the above dataset.
+Now when user specify the search criteria as cat then all of the abovementioned will appears in search result. 
+It is as simple as you want :).
+
+In traditional infix search you will get the resultset when it is starting with cat e.g. catalina will be returned once user specifies search criteria as cat.
 The answer to this problem is custom analyzer refer [here]().
+The solution is having three parts: one is creating Index in which we specify the custom analyzer & define token filter.
 
 ##Create Index:
 
@@ -40,7 +45,11 @@ Body:
     ]
 }
 ``` 
+If you concentrate on the analyzers part we have defined analyzer as standard, prefix, suffix & reverse analyzer. This is the crux of this solution, the edge_ngram tokenizer first breaks text down into words whenever 
+it encounters one of a list of specified characters, then it emits N-grams of each word where the start of the N-gram is anchored to the beginning of the word. However in this case we took reverse text too, now this will address
+our requirement to match both the suffix & prefix matching.
 
+This will require us to replicate the same data into two additional fields i.e. partial name & suffix name. Now the index is created, let us try to push some data into it.
 ##Push Data:
 
 ``` REST
@@ -57,7 +66,7 @@ Body:
 }
 ```
 
-So platform is set, time to rock it:
+So platform is set, its time to rock it:
 ##Search
 
 ``` REST
